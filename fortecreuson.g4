@@ -1,4 +1,4 @@
-grammar variaveis;
+grammar fortecreuson;
 
 @header { import java.util.*; }
 @members {
@@ -10,43 +10,30 @@ grammar variaveis;
 	String nome;
 }
 
-inicio: {
-    escopo = 0;
-    saida+="public class Saida{\n\t";
-  } 
-  declvar 'inicio' {
-    escopo = 1;
-    saida+="\n\tpublic static void main(String args[]){\n\t\t";
-  }
-  declvar cmd 'fim' {
-    saida+="}\n}"; 
-    System.out.println(saida);
-  };
+inicio: 'inicio'{ escopo = 0; saida+="public class Saida{\n\t";}
+                {saida += "\tpublic static void main(String args[]){\n";}
+      declvar
+      cmd
+      'fim' {saida+="\t}\n";}
+            {saida+="}\n";}
+            {System.out.println(saida);};
 
-declvar: (
-  tipo ID {
-    x = new Variavel($ID.text, tipo, escopo);
-      boolean ret = cv.adiciona(x);
-      if(!ret){
-        System.out.println("Variavel "+$ID.text+" ja foi declarada!!!");
-          System.exit(0);
-      } 
-  } 
-  PV {
-    saida+=$ID.text+";\n\t";
-  } 
-)* ;
+declvar: (tipo
+         ID { saida += $ID.text;
+            x = new Variavel($ID.text, tipo, escopo);
+            boolean resultado = cv.adiciona(x);
+            if(!resultado){
+              System.out.println("Variavel "+$ID.text+" ja foi declarada!");
+              System.exit(0);
+            }
+          } 
+        PV { saida+=";\n"; } 
+      )* ;
 
 tipo: (
-  'int' {
-    tipo = 0; saida+="int ";
-  }
-  | 'char' {
-    tipo = 1; saida+="char ";
-  } 
-  | 'double' {
-    tipo = 2; saida+="double ";
-  } 
+    'int' { tipo = 0; saida+="int "; }
+  | 'char' { tipo = 1; saida+="char "; } 
+  | 'double' { tipo = 2; saida+="double "; } 
 );
 
 cmd: (cond | atrib)*;
