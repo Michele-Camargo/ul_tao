@@ -36,11 +36,10 @@ tipo: (
   | 'double' { tipo = 2; saida+="double "; } 
 );
 
-cmd: (cond | atrib)*;
+cmd: (cond | atrib | repfor | repwhile )*;
 
-cond: 'se' {saida+="if"; } AP {saida+="("; } comp FP {saida+=")"; } AC {saida+="{"; } cmd FC {saida+="}"; }
-		('senao' {saida+="else"; }AC {saida+="{"; }cmd FC {saida+="}"; })?;
 comp: (ID | NUM) OPREL (ID | NUM);
+
 atrib: 	ID {Variavel var1 = cv.busca($ID.text);}
 		Op_atrib
 		(ID {Variavel var2 = cv.busca($ID.text);
@@ -51,6 +50,16 @@ atrib: 	ID {Variavel var1 = cv.busca($ID.text);}
 			}
 		| NUM)
 		;
+
+cond: 'se' {saida+="if"; } AP {saida+="("; } comp FP {saida+=")"; } AC {saida+="{"; } cmd FC {saida+="}"; }
+		('senao' {saida+="else"; } AC {saida+="{"; } cmd FC {saida+="}"; })?;
+
+
+repdowhile: 'do' {saida+="do"; } AC  {saida+="{"; } cmd FC {saida+="}"; }
+            'while' {saida+="while"; } AP {saida+="("; } comp FP {saida+=")"; };
+
+repwhile: 'while' {saida+="while"; } AP {saida+="("; } comp FP {saida+=")"; AC {saida+="{"; } cmd FC {saida+="}";};
+
 
 ID: [A-Za-z]+;
 NUM: [0-9]+;
