@@ -36,7 +36,7 @@ tipo: (
   | 'double' { tipo = 2; saida+="double "; } 
 );
 
-cmd: (cond | atrib | repfor | repwhile )*;
+cmd: (cond | atrib | repwhile | repdowhile )*;
 
 comp: (ID | NUM) OPREL (ID | NUM);
 
@@ -54,12 +54,10 @@ atrib: 	ID {Variavel var1 = cv.busca($ID.text);}
 cond: 'se' {saida+="if"; } AP {saida+="("; } comp FP {saida+=")"; } AC {saida+="{"; } cmd FC {saida+="}"; }
 		('senao' {saida+="else"; } AC {saida+="{"; } cmd FC {saida+="}"; })?;
 
+repwhile: 'while' {saida+="while"; } AP {saida+="("; } comp FP {saida+=")";} AC {saida+="{"; } cmd FC {saida+="}";};
 
 repdowhile: 'do' {saida+="do"; } AC  {saida+="{"; } cmd FC {saida+="}"; }
             'while' {saida+="while"; } AP {saida+="("; } comp FP {saida+=")"; };
-
-repwhile: 'while' {saida+="while"; } AP {saida+="("; } comp FP {saida+=")"; AC {saida+="{"; } cmd FC {saida+="}";};
-
 
 ID: [A-Za-z]+;
 NUM: [0-9]+;
