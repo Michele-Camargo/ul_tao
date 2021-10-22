@@ -36,22 +36,6 @@ tipo: (
   | 'doublebis' { tipo = 2; saida+="\t\tdouble "; } 
 );
 
-cmd: (cond | atrib | repwhile | repdowhile )*;
-
-comp: (ID  { Variavel var1 = cv.busca($ID.text);
-    if(var1 == null) { 
-      System.out.println("Variavel: "+$ID.text+" nao declarada!");
-      System.exit(0); 
-    } else { 
-      saida+=$ID.text; }
-  } | NUM { saida+=$NUM.text; } | DOUBLE { saida+=$DOUBLE.text; }) OPREL { saida+=" "+$OPREL.text+" "; } (ID  {Variavel var1 = cv.busca($ID.text);
-    if(var1 == null) { 
-      System.out.println("Variavel: "+$ID.text+" nao declarada!");
-      System.exit(0); 
-    } else { 
-      saida+=$ID.text; }
-  } | NUM { saida+=$NUM.text; } | DOUBLE { saida+=$DOUBLE.text; });
-
 atrib: 	ID 
   {Variavel var1 = cv.busca($ID.text);
     if(var1 == null) { 
@@ -100,6 +84,23 @@ atrib: 	ID
     )
     PV { saida+=$PV.text; } 
 		;
+
+cmd: (cond | atrib | repwhile | repdowhile )*;
+
+comp: (ID  { Variavel var1 = cv.busca($ID.text);
+    if(var1 == null) { 
+      System.out.println("Variavel: "+$ID.text+" nao declarada!");
+      System.exit(0); 
+    } else { 
+      saida+=$ID.text; }
+  } | NUM { saida+=$NUM.text; } | DOUBLE { saida+=$DOUBLE.text; }) OPREL { saida+=" "+$OPREL.text+" "; } (ID  {Variavel var1 = cv.busca($ID.text);
+    if(var1 == null) { 
+      System.out.println("Variavel: "+$ID.text+" nao declarada!");
+      System.exit(0); 
+    } else { 
+      saida+=$ID.text; }
+  } | NUM { saida+=$NUM.text; } | DOUBLE { saida+=$DOUBLE.text; });
+
 
 cond: 'se' {saida+="\n\n\t\tif"; } AP {saida+="("; } comp FP {saida+=")"; } AC {saida+="{"; } cmd FC {saida+="\n\t\t}"; }
 		('senao' {saida+="\n\t\telse"; } AC {saida+="{"; } cmd FC {saida+="\n\t\t}\n"; })?;
