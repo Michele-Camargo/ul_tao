@@ -44,13 +44,13 @@ comp: (ID  { Variavel var1 = cv.busca($ID.text);
       System.exit(0); 
     } else { 
       saida+=$ID.text; }
-  } | NUM | DOUBLE) OPREL { saida+=" "+$OPREL.text+" "; } (ID  {Variavel var1 = cv.busca($ID.text);
+  } | NUM { saida+=$NUM.text; } | DOUBLE { saida+=$DOUBLE.text; }) OPREL { saida+=" "+$OPREL.text+" "; } (ID  {Variavel var1 = cv.busca($ID.text);
     if(var1 == null) { 
       System.out.println("Variavel: "+$ID.text+" nao declarada!");
       System.exit(0); 
     } else { 
       saida+=$ID.text; }
-  } | NUM | DOUBLE);
+  } | NUM { saida+=$NUM.text; } | DOUBLE { saida+=$DOUBLE.text; });
 
 atrib: 	ID 
   {Variavel var1 = cv.busca($ID.text);
@@ -96,6 +96,7 @@ atrib: 	ID
 				System.exit(0);
       }
        saida+=$CHAR.text; }
+    | expressao
     )
     PV { saida+=$PV.text; } 
 		;
@@ -108,11 +109,50 @@ repwhile: 'enquanto' {saida+="\n\n\t\twhile"; } AP {saida+="("; } comp FP {saida
 repdowhile: 'faca' {saida+="\n\n\t\tdo"; } AC  {saida+="{"; } cmd FC {saida+="}"; }
             'enquanto' {saida+="\n\t\twhile"; } AP {saida+="("; } comp FP {saida+=")"; } PV { saida+=$PV.text; } ;
 
+expressao: (ID {
+        Variavel var2 = cv.busca($ID.text);
+
+        if(var2 == null) { 
+              System.out.println("variavel "+$ID.text+" nao declarada!");
+              System.exit(0); 
+        }
+
+			 if(var2.getTipo()!=0 && var2.getTipo()!=2){
+				System.out.println("Nao e possivel montar uma expressao com a variavel "+var2.getNome()+" tipo invalido");
+				System.exit(0);
+			 }
+
+      saida+=$ID.text;
+
+			} | NUM {saida+=$NUM.text;} 
+        | DOUBLE {saida+=$DOUBLE.text;}) OPERADOR { saida+=" "+$OPERADOR.text+" "; } 
+        (ID {
+        Variavel var2 = cv.busca($ID.text);
+
+        if(var2 == null) { 
+              System.out.println("variavel "+$ID.text+" nao declarada!");
+              System.exit(0); 
+        }
+
+			 if(var2.getTipo()!=0 && var2.getTipo()!=2){
+				System.out.println("Nao e possivel montar uma expressao com a variavel "+var2.getNome()+" tipo invalido");
+				System.exit(0);
+			 }
+
+      saida+=$ID.text;
+
+       }
+       | NUM {saida+=$NUM.text;} 
+       | DOUBLE {saida+=$DOUBLE.text;} 
+       | expressao
+       | AP { saida+="("; } expressao FP { saida+=")"; }
+       );
+
 ID: [A-Za-z]+;
 NUM: [0-9]+;
 DOUBLE: [0-9]+.[0-9]+;
 CHAR: '"'.?'"';
-OPERADORES: '+' | '-' | '*' | '/'; 
+OPERADOR: '+' | '-' | '*' | '/'; 
 OPREL: '>' | '<' | '>=' | '<=' | '==' | '!=' ;
 PV: ';' ;
 AC: '{' ;
